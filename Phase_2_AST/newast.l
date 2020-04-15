@@ -92,7 +92,6 @@ return 		{ fprintf(yyout, "%s", yytext);	 return RETURN; }
 "-="		{fprintf(yyout, "%s", yytext);  return(SUB_ASSIGN); }
 "*="		{fprintf(yyout, "%s", yytext);  return(MUL_ASSIGN); }
 "/="		{fprintf(yyout, "%s", yytext);  return(DIV_ASSIGN); }
-"%="		{fprintf(yyout, "%s", yytext);  return(MOD_ASSIGN); }
 
 	/* Relational Operators */
 "++"		{fprintf(yyout, "%s", yytext);  return(INC_OP); }
