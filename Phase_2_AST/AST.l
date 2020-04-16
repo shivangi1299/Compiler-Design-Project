@@ -3,7 +3,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 
-	#include "newast.tab.h"
+	#include "y.tab.h"
 
 
 	int line = 1;

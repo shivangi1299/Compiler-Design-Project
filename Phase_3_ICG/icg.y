@@ -24,7 +24,7 @@ extern int LineNo;
 
 %union { char var[10]; }
 %token <var> NUM VAR RELOP
-%token MAIN IF ELSE WHILE TYPE FOR
+%token MAIN IF ELSE WHILE TYPE FOR COUT S
 %type <var> EXPR ASSIGNMENT CONDITION IFST ELSEST WHILELOOP FORLOOP 
 %left '-' '+'
 %left '*' '/'
@@ -37,7 +37,7 @@ BLOCK: '{' CODE '}';
 
 CODE: BLOCK | STATEMENT CODE | STATEMENT ;
 
-STATEMENT: DECST ';' | ASSIGNMENT ';' | CONDST | WHILEST | FORST ;
+STATEMENT: DECST ';' | ASSIGNMENT ';' | CONDST | WHILEST | FORST | PRINTST ;
 
 DECST: TYPE VARLIST ;
 
@@ -163,7 +163,7 @@ sprintf(QUAD[Ind].result,"%d",Index);
 
 };
 
-CONDITION: VAR RELOP VAR {AddQuadruple($2,$1,$3,$$);
+CONDITION: VAR RELOP CONDITION {AddQuadruple($2,$1,$3,$$);
 
 StNo=Index-1;
 
@@ -264,7 +264,9 @@ Index++;
 
 };
 
+PRINTST: COUT OUTPUT ';' ;
 
+OUTPUT: S | EXPR ;
 
 %%
 
