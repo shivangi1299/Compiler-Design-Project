@@ -1,13 +1,14 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "y.tab.h"
+#include "validatecfg.tab.h"
 int yyscope=0;
 int line=0;
 int sym_table_length = 0;
 char dtype[10];
 int terminators[100];
 int terminator_index=0;
+int yylineno=0;
 struct sym_table {
 	char name[20];
 	char value[50];
