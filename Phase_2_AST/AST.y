@@ -10,7 +10,7 @@
 
 	int x=0;	
 
-	extern int line;
+	extern int yylineno;
 	
 	int scope = 0;
 
@@ -71,11 +71,12 @@
 
 %}
 
-%token  HASH INCLUDE STDIO STDLIB MATH STRING TIME 
-%token  STRING_LITERAL HEADER_LITERAL PRINT RETURN
+%token  INCLUDE
+%token  STRING_LITERAL COUT RETURN 
 %left 	'+' '-'
-%left 	'/' '*' '%'
+%left 	'/' '*' 
 %right 	'='
+%expect 1
 
 %union{
 	int ival;
@@ -90,9 +91,9 @@
 %token <fval> 	FLOAT_LITERAL 
 %token <ptr> 	IDENTIFIER  
 
-%token	INC_OP 	DEC_OP 	LE_OP 	GE_OP 	EQ_OP 	NE_OP
+%token	INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP OUT_OP
 %token	MUL_ASSIGN 	DIV_ASSIGN 	ADD_ASSIGN 	SUB_ASSIGN
-%token	<ival> 	CHAR 	INT 	FLOAT 	VOID
+%token	<ival> 	CHAR INT FLOAT	VOID
 %token 	FOR WHILE
 %token  IF ELSE
 
@@ -104,26 +105,21 @@
 %type <fval>	multiplicative_expression 
 %type <fval>	unary_expression 	unary_operator
 %type <fval>	conditional_expression
-%type <fval>	expression 	expression_statement
+%type <fval>	expression 	
 %type <fval>	postfix_expression 	
 
 %type <string> 	declarator
-
-%nonassoc "low"
-%nonassoc "high"
 
 %start S
 
 %%
 S : program 
   
-program	: HASH INCLUDE '<' libraries '>' program | HASH INCLUDE HEADER_LITERAL 	program | translation_unit	;
+program	: INCLUDE program | translation_unit	;
 
 translation_unit : ext_dec | translation_unit ext_dec ;
 
 ext_dec	: declaration | function_definition;
-
-libraries : STDIO | STDLIB | MATH | STRING | TIME;
 
 compound_statement : '{' '}' | '{' block_item_list '}' ;
 
@@ -131,7 +127,7 @@ block_item_list	: block_item | block_item_list block_item {	create_node("stmt", 
 
 block_item : declaration | statement | RETURN expression_statement	{ create_node("return", 1);	} | printstat ';' ;
 
-printstat : PRINT '(' STRING_LITERAL ')' | PRINT '(' STRING_LITERAL ',' expression ')' ;
+printstat : COUT OUT_OP STRING_LITERAL | COUT OUT_OP STRING_LITERAL OUT_OP expression;
 
 declaration : type_specifier init_declarator_list ';' ;
 
@@ -151,7 +147,7 @@ iteration_statement : FOR '(' expression_statement  expression_statement express
 
 condition_statement : IF '(' expression ')' statement {create_node("if",0);} | condition_statement ELSE statement {create_node("else",0);} ;
 
-type_specifier : VOID 	{	datatype = $1; } | CHAR { datatype = $1; }	| INT {	datatype = $1; } | FLOAT {datatype = $1; };
+type_specifier : VOID 	{datatype = $1; } | CHAR { datatype = $1; }	| INT {	datatype = $1; } | FLOAT {datatype = $1; };
 
 function_definition: type_specifier declarator compound_statement 	
 				{
@@ -400,7 +396,7 @@ multiplicative_expression : unary_expression			{	$$ = $1;	}
 
 void yyerror(const char *str){
 	fflush(stdout);
-	printf("Line:%d: %s", line,str); }
+	printf("Line:%d: %s", yylineno,str); }
 
 int main(){
 	yyout = fopen("output.c", "w");
@@ -479,7 +475,7 @@ void addsymbol(struct node *tp, char *vname) {
     tp->link = NULL;
     tp->scope = scope;
     tp->valid = 1;
-    tp->lineno = line;		}
+    tp->lineno = yylineno;		}
 
 void create_node(char *token, int leaf) {
 	Node *l;
@@ -514,7 +510,6 @@ Node* pop_tree(){
 
 void printtree(Node* root){
     int h = getmaxlevel(root)-1;
-	printf("%d", h);
     int i;
 	printf("\n\nAbstract Syntax Tree\n\n");
 

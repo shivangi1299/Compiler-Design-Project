@@ -1,9 +1,9 @@
 int main ()
 {
+	cout<<"Hello";
 	float x,y;
 	x=5;
 	int z;
-	--z;
 	if(x>=10)
 	{
 		y = a+b;
@@ -11,13 +11,12 @@ int main ()
 	}
 	else
 	{
-		// a=b;
-		cout<<"Successful";
+		x = 20;
 	}
-	for(int y=10;y<=5;y++)
+	for(y=10;y<=5;y++)
 	{
 		w=a*y;
-		--b;
+		// b++;
 	}
 	int t;
 	while(x<10)
@@ -26,6 +25,4 @@ int main ()
 		{
 			x+=y;}
 	}
-	cout<<x+y;
-	x=10;
 }
