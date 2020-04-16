@@ -3,7 +3,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 
-	#include "newast.tab.h"
+	#include "y.tab.h"
 
 	int yylineno = 1;
 	extern int scope;
@@ -96,3 +96,4 @@ int yywrap(void)
 {
 	return 1;
 }
+
