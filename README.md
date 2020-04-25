@@ -19,3 +19,7 @@ Abstract Syntax Tree Generation
 Phase_3_ICG:
 
 Intermediate Code Generation in Quadruple format
+
+Phase_4_CodeOptimization
+
+Implementation of Constant Folding & Constant Propogation code optimization techniques
