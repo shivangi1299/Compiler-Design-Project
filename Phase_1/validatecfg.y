@@ -22,12 +22,17 @@ extern struct sym_table {
 //extern struct table[100];
 extern int sym_table_length;
 extern void print_symtable();
+extern void addvalue(int y, int yylineno);
+int flag=0;
+
 %}
-
-%token ID num s begin b_open b_close br_open br_close dt semi eq com tif telse relop arop incop tfor twhile tcout coutop combop
-
+%union { char var[10]; }
+%token ID num s begin b_open b_close br_open br_close dt semi eq com tif telse relop addop mulop divop subop incop tfor twhile tcout coutop combop
+%type <var> assignexp OP exp num
+/*
 %nonassoc "null"
 %nonassoc "rule"
+
 
 %right eq
 %left tif
@@ -43,6 +48,44 @@ extern void print_symtable();
 %left tcout
 %left dt
 %right error
+%expect 1
+
+%nonassoc "null"
+%nonassoc "rule"
+
+
+%prec tif
+%prec twhile
+%prec tfor
+%prec br_close
+%prec br_open
+
+%prec ID
+%prec num
+%prec incop
+%prec semi
+%prec tcout
+%prec dt
+%right error
+*/
+%nonassoc "null"
+%nonassoc "rule"
+
+%left tif
+%left twhile
+%left tfor
+%left br_close
+%right br_open
+
+%right ID
+%right num
+%right incop
+%left semi
+%left tcout
+%left dt
+%right error
+%expect 1
+
 
 %%
 
@@ -90,11 +133,22 @@ prfx: dt ID | ID;
 
 cond : exp | loop_opn cond | eos ;
 
-exp : val operator cond | val %prec "null"| val eos %prec "rule";
+exp : val operator cond | val %prec "null"| val eos %prec "rule" | ID eq assignexp  ;
+
+assignexp: num OP num 
+{switch(flag)
+{case 1: /*printf("%d", atoi($1)+atoi($3));*/ addvalue(atoi($1)+atoi($3), yylineno); break; 
+case 2: /*printf("%d", atoi($1)+atoi($3));*/ addvalue(atoi($1)*atoi($3), yylineno); break;
+case 3: /*printf("%d", atoi($1)+atoi($3));*/ addvalue(atoi($1)/atoi($3), yylineno); break;
+case 4: /*printf("%d", atoi($1)+atoi($3));*/ addvalue(atoi($1)-atoi($3), yylineno); break;
+};
+};
 
 val: ID | num;
 
-operator : relop | arop | eq;
+operator : relop | OP | eq ;
+
+OP: addop {flag=1;} | mulop{flag=2;} | divop {flag=3;} | subop {flag=4;};
 
 loop_opn : incop ID | ID incop | ID combop val;
 
@@ -116,6 +170,7 @@ extern void yyerror(char* si)
     printf("%s", si);
     valid=0;
 }
+
 
 int main(int argc, char * argv[])
 

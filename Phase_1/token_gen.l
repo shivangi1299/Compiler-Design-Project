@@ -1,14 +1,13 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "validatecfg.tab.h"
+#include "y.tab.h"
 int yyscope=0;
 int line=0;
 int sym_table_length = 0;
 char dtype[10];
 int terminators[100];
 int terminator_index=0;
-int yylineno=0;
 struct sym_table {
 	char name[20];
 	char value[50];
@@ -20,6 +19,7 @@ struct sym_table {
 int installID(int type, char* tmp_yytext, int yylineno, int yyscope, char* dtype);
 void remove_duplicates();
 void addValue(char* yytext, int yylineno);
+void addvalue(int y, int yylineno);
 int ispresent(char* yytext);
 void print_symtable();
 %}
@@ -50,7 +50,10 @@ while {printf("%d\t%s\t\t\t\tKEYWORD\n",yylineno,yytext);return twhile;}
 int|float|char|struct|bool|double|void|wchar_t|class|union|enum|typedef {printf("%d\t%s\t\t\t\tDATATYPE\n",yylineno,yytext); strcpy(dtype,yytext); line=yylineno; return dt;}
 \"(.)*\" {printf("%d\t%s\t\t\t\tSTRING CONSTANT\n",yylineno,yytext); return s;}
 >|<|>=|<=|==|!= {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext); return relop;}
-\+|\*|\/|\- {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return arop;}
+\+ {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return addop;}
+\* {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return mulop;}
+\/ {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return divop;}
+\- {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return subop;}
 \+\+|\-\- {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return incop;}
 \+=|\-=|\*=|\/=	{printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return combop;}
 \<< {printf("%d\t%s\t\t\t\tOPERATOR\n",yylineno,yytext);return coutop;}
@@ -58,9 +61,9 @@ int|float|char|struct|bool|double|void|wchar_t|class|union|enum|typedef {printf(
 \) {printf("%d\t%s\t\t\t\tBRACKET CLOSE\n",yylineno,yytext); return b_close;}
 
 
-{letter}({letter}|{digit}|_)* {printf("%d\t%s\t\t\t\tIDENTIFIER\t\t%d\n",yylineno,yytext,yyscope); if(line==yylineno || ispresent(yytext)){installID(1,yytext,yylineno,yyscope,dtype);}; return ID;}
+{letter}({letter}|{digit}|_)* {printf("%d\t%s\t\t\t\tIDENTIFIER\t\t%d\n",yylineno,yytext,yyscope); if(line==yylineno || ispresent(yytext)){installID(1,yytext,yylineno,yyscope,dtype);}; strcpy(yylval.var,yytext);return ID;}
 
-{digit}+ {printf("%d\t%s\t\t\t\tINTEGER\n",yylineno,yytext); addValue(yytext, yylineno); return num;}
+{digit}+ {printf("%d\t%s\t\t\t\tINTEGER\n",yylineno,yytext); addValue(yytext, yylineno); strcpy(yylval.var,yytext); return num;}
 {digit}+"E"(\+|\-)?{digit}+ printf("%d\t%s\t\t\t\tREAL NUMBER\n",yylineno,yytext);
 {digit}+\.{digit}+(E(\+|\-)?{digit}+)? printf("%d\t%s\t\t\t\tFLOATING NUMBER\n",yylineno,yytext);
 = {printf("%d\t%s\t\t\t\tASSIGNMENT\n",yylineno,yytext); return eq;}
@@ -86,30 +89,6 @@ int installID (int type, char* tmp_yytext, int yylineno, int yyscope, char* dtyp
 			break;	}
 				sym_table_length++;
 }
-
-/*void remove_duplicates()
-{
-for(int i=0; i<sym_table_length; i++)
-    {
-        for(int j=i+1; j<sym_table_length; j++)
-        {
-            if( (strcmp(table[i].value, table[j].value) == 0) && (strcmp(table[i].name, table[j].name) == 0)) 
-            {
-		if(table[i].scope == table[j].scope)
-                {for(int k=j; k<sym_table_length; k++)
-                {
-                    table[k] = table[k + 1];
-                }
-		sym_table_length--;
-                j--;
-		}
-		else{
-		strcpy(table[j].datatype,table[i].datatype);}
-                
-            }
-        }
-    }
-}*/
 
 void remove_duplicates()
 {
@@ -155,6 +134,14 @@ for(int i=0; i<sym_table_length; i++)
 		table[i].id_value=atoi(tmp_text);
 	}
 }
+
+void addvalue(int y, int yylineno){
+for(int i=0; i<sym_table_length; i++)
+	if(table[i].line_number==yylineno){
+		table[i].id_value=y;
+	}
+}
+
 
 void print_symtable(){
  remove_duplicates();
