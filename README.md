@@ -30,3 +30,7 @@ A simple C++ compiler built using lex and yacc tools for basic C++ statements. T
 
 Each phase expects a '.cpp' input file to run. Please input the 'inputfile.cpp' to the lex and yacc code of all phases to see an output. 
 
+## Report
+
+Find a detailed [report](CD-Mini-Project-Report.pdf) here.
+
