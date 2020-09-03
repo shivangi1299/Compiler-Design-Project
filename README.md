@@ -4,6 +4,8 @@ A simple C++ compiler built using lex and yacc tools for basic C++ statements. T
 - WHILE
 - FOR 
 
+## Description
+
 ### Phase_1: 
 
 1. Generation of tokens
@@ -23,3 +25,8 @@ A simple C++ compiler built using lex and yacc tools for basic C++ statements. T
 ### Phase_4_CodeOptimization
 
 1. Implementation of Constant Folding & Constant Propogation code optimization techniques
+
+## Code
+
+Each phase expects a '.cpp' input file to run. Please input the 'inputfile.cpp' to the lex and yacc code of all phases to see an output. 
+
