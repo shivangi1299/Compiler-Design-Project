@@ -1,4 +1,4 @@
-# Compiler-Design-Project
+# Compiler for C++ using C
 A simple C++ compiler built using lex and yacc tools for basic C++ statements. The following control constructs are handled :-
 - IF ELSE
 - WHILE
