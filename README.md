@@ -1,25 +1,25 @@
 # Compiler-Design-Project
-A simple C++ compiler built using lex and yacc tools for basic C++ statements.
-IF ELSE,
-WHILE,
-FOR 
+A simple C++ compiler built using lex and yacc tools for basic C++ statements. The following control constructs are handled :-
+- IF ELSE
+- WHILE
+- FOR 
 
-Phase_1: 
+### Phase_1: 
 
-Generation of tokens,
-Symbol table,
-Expression Evaluation,
-Syntax validation,
-Error handling
+1. Generation of tokens
+2. Construction of Symbol table
+3. Expression Evaluation
+4. Syntax validation
+5. Error handling
 
-Phase_2_AST:
+### Phase_2_AST:
 
-Abstract Syntax Tree Generation 
+1. Abstract Syntax Tree Generation 
 
-Phase_3_ICG:
+### Phase_3_ICG:
 
-Intermediate Code Generation in Quadruple format
+1. Intermediate Code Generation in Quadruple format
 
-Phase_4_CodeOptimization
+### Phase_4_CodeOptimization
 
-Implementation of Constant Folding & Constant Propogation code optimization techniques
+1. Implementation of Constant Folding & Constant Propogation code optimization techniques
